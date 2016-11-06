@@ -140,13 +140,16 @@ smaller than the number of elements that can be read from stream"
           while (= pos buffer-size))
     (setq result
           (nreverse result))
-    ;; element-type character -> return a string
-    (when (subtypep element-type 'character)
-      (if (>= (length result) array-total-size-limit)
-          (warn "Maximum possible string length exceeded! Returning a list of characters instead.")
-          (setq result
-                (coerce result 'string))))
-    result))
+    (cond
+      ((>= (length result) array-total-size-limit)
+       (warn "Maximum possible array size exceeded! Returning a list.")
+       result)
+      ((subtypep element-type 'character)
+       ;; element-type character -> return a string
+       (coerce result 'string))
+      (t
+       ;; all other cases -> return an array
+       (make-array (length result) :initial-contents result)))))
 
 (declaim (inline %read-body-into-array))
 (defun %read-body-into-array (stream element-type buffer-size)

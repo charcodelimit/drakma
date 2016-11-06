@@ -130,6 +130,6 @@
       (is (string-equal (drakma::%read-body str 'character) "test-string"))))
   (let ((drakma:*limited-array-size* t))
     (flexi-streams:with-input-from-sequence (str #(0 1 2 3))
-      (is (equalp (drakma::%read-body str 'flexi-streams:octet) '(0 1 2 3))))
+      (is (equalp (drakma::%read-body str 'flexi-streams:octet) #(0 1 2 3))))
     (with-input-from-string (str "test-string")
       (is (string-equal (drakma::%read-body str 'character) "test-string")))))
