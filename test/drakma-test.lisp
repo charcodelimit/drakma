@@ -74,7 +74,7 @@
         (drakma:http-request "http://httpbin.org/gzip" :decode-content t)
       (is (= 200 status-code))
       (is (typep body-or-stream 'string))
-      (is (search "\"gzipped\": true" body-or-stream)))))
+      (is (search "\"gzipped\":true" body-or-stream)))))
 
 (test deflate-content
   (let ((drakma:*header-stream* *standard-output*)
@@ -83,7 +83,7 @@
         (drakma:http-request "http://httpbin.org/deflate" :decode-content t)
       (is (= 200 status-code))
       (is (typep body-or-stream 'string))
-      (is (search "\"deflated\": true" body-or-stream)))))
+      (is (search "\"deflated\":true" body-or-stream)))))
 
 (test gzip-content-undecoded
       (let ((drakma:*header-stream* *standard-output*))
@@ -121,6 +121,36 @@
     (is (subtypep (stream-element-type stream) 'flexi-streams:octet))
     (let ((buffer (make-array 1 :element-type 'flexi-streams:octet)))
       (read-sequence buffer stream))))
+
+(test verify.wrong.host
+  (signals error
+    (drakma:http-request "https://wrong.host.badssl.com/" :verify :required))
+  (signals error
+    (drakma:http-request "https://wrong.host.badssl.com/" :verify :optional))
+  (finishes
+    (drakma:http-request "https://wrong.host.badssl.com//" :verify nil)))
+
+(test verify.expired
+  (signals error
+    (drakma:http-request "https://expired.badssl.com//" :verify :required))
+  (signals error
+    (drakma:http-request "https://expired.badssl.com/" :verify :optional))
+  (finishes
+    (drakma:http-request "https://expired.badssl.com/" :verify nil)))
+
+(test verify.self-signed
+  (signals error
+    (drakma:http-request "https://self-signed.badssl.com/" :verify :required)))
+
+(test verify.untrusted-root
+  (signals error
+    (drakma:http-request "https://untrusted-root.badssl.com/" :verify :required)))
+
+(test verify.null
+  (signals error
+    (drakma:http-request "https://null.badssl.com/" :verify :required))
+  (finishes
+    (drakma:http-request "https://null.badssl.com/" :verify :optional)))
 
 (test read-stream
   (let ((drakma:*limited-array-size* nil))
