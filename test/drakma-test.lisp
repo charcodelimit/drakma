@@ -74,7 +74,7 @@
         (drakma:http-request "http://httpbin.org/gzip" :decode-content t)
       (is (= 200 status-code))
       (is (typep body-or-stream 'string))
-      (is (search "\"gzipped\":true" body-or-stream)))))
+      (is (search "\"gzipped\": true" body-or-stream)))))
 
 (test deflate-content
   (let ((drakma:*header-stream* *standard-output*)
@@ -83,7 +83,7 @@
         (drakma:http-request "http://httpbin.org/deflate" :decode-content t)
       (is (= 200 status-code))
       (is (typep body-or-stream 'string))
-      (is (search "\"deflated\":true" body-or-stream)))))
+      (is (search "\"deflated\": true" body-or-stream)))))
 
 (test gzip-content-undecoded
       (let ((drakma:*header-stream* *standard-output*))
