@@ -639,7 +639,10 @@ Any encodings in Transfer-Encoding, such as chunking, are always performed."
                 #+:lispworks
                 (comm:attach-ssl http-stream
                                  :ssl-side :client
-                                 :tlsext-host-name (puri:uri-host uri))
+                                 #-(or lispworks4 lispworks5 lispworks6)
+                                 :tlsext-host-name
+                                 #-(or lispworks4 lispworks5 lispworks6)
+                                 (puri:uri-host uri))
                 #-:lispworks
                 (setq http-stream (make-ssl-stream http-stream
                                                    :hostname (puri:uri-host uri)
@@ -674,7 +677,10 @@ Any encodings in Transfer-Encoding, such as chunking, are always performed."
                 #+:lispworks
                 (comm:attach-ssl raw-http-stream
                                  :ssl-side :client
-                                 :tlsext-host-name (puri:uri-host uri))
+                                 #-(or lispworks4 lispworks5 lispworks6)
+                                 :tlsext-host-name
+                                 #-(or lispworks4 lispworks5 lispworks6)
+                                 (puri:uri-host uri))
                 #-:lispworks
                 (setq http-stream (wrap-stream
                                    (make-ssl-stream raw-http-stream
